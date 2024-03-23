@@ -6,8 +6,8 @@ spring:
     name: cars-auctions
   datasource:
     url: jdbc:postgresql://localhost:15432/cars_auctions
-    username: netop
-    password: netop
+    username: user
+    password: password
   jpa:
     hibernate:
       ddl-auto: create
