@@ -51,6 +51,7 @@ class InspectionAppointmentsControllerITSpec extends IntegrationTestSpecificatio
 
     def "should finalise inspection"() {
         given:
+        mockAgentUser()
         var appointmentId = bookAppointment()
 
         when:
@@ -67,6 +68,7 @@ class InspectionAppointmentsControllerITSpec extends IntegrationTestSpecificatio
 
     def "should not allow to change status again to BOOKED"() {
         given:
+        mockAgentUser()
         var appointmentId = bookAppointment()
         sendPut("inspection-appointments/$appointmentId/status", ['status': 'INSPECTION_SUCCESSFUL'])
 
@@ -75,6 +77,29 @@ class InspectionAppointmentsControllerITSpec extends IntegrationTestSpecificatio
 
         then:
         thrown status400()
+    }
+
+    def "should not finalise inspection as not logged in user"() {
+        given:
+        var appointmentId = bookAppointment()
+
+        when:
+        sendPut("inspection-appointments/$appointmentId/status", ['status': 'INSPECTION_SUCCESSFUL'])
+
+        then:
+        thrown status401()
+    }
+
+    def "should not finalise inspection as dealer user"() {
+        given:
+        var appointmentId = bookAppointment()
+        mockDealerUser()
+
+        when:
+        sendPut("inspection-appointments/$appointmentId/status", ['status': 'INSPECTION_SUCCESSFUL'])
+
+        then:
+        thrown status403()
     }
 
     def bookAppointment() {

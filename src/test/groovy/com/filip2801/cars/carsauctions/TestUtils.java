@@ -1,5 +1,6 @@
 package com.filip2801.cars.carsauctions;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class TestUtils {
@@ -8,5 +9,9 @@ public class TestUtils {
 
     public static Long uniqueId() {
         return ID_SEQ.getAndIncrement();
+    }
+
+    public static String uniqueString() {
+        return UUID.randomUUID().toString();
     }
 }
