@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import static com.filip2801.cars.carsauctions.utils.Validate.validateIsTrue;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,4 +34,9 @@ public class InspectionAppointment {
     @Enumerated(EnumType.STRING)
     private InspectionAppointmentStatus status;
 
+    public void finaliseInspection() {
+        validateIsTrue(status == InspectionAppointmentStatus.BOOKED, "Cannot finalise inspection for status " + status);
+
+        status = InspectionAppointmentStatus.INSPECTION_SUCCESSFUL;
+    }
 }

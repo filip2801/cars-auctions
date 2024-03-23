@@ -4,12 +4,12 @@ import com.filip2801.cars.carsauctions.model.InspectionAppointmentStatus;
 
 import java.time.LocalDateTime;
 
-public record InspectionAppointmentDto(
-        Long id,
+public record InspectionAppointmentBookingDto(
+        Long appointmentId,
         Long locationId,
         LocalDateTime time,
         String customerEmailAddress,
         InspectionAppointmentStatus status,
-        Long carId
+        CarDto car
 ) {
 }

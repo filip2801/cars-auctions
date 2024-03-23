@@ -55,4 +55,13 @@ class IntegrationTestSpecification extends Specification {
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(headers);
     }
+
+    Class status400() {
+        org.springframework.web.client.HttpClientErrorException$BadRequest
+    }
+
+    Class status404() {
+        org.springframework.web.client.HttpClientErrorException$NotFound
+    }
+
 }

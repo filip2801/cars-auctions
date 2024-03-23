@@ -1,15 +1,25 @@
 package com.filip2801.cars.carsauctions.service;
 
-import com.filip2801.cars.carsauctions.dto.InspectionAppointmentDto;
 import com.filip2801.cars.carsauctions.dto.CarDto;
-import com.filip2801.cars.carsauctions.model.InspectionAppointment;
+import com.filip2801.cars.carsauctions.dto.InspectionAppointmentBookingDto;
+import com.filip2801.cars.carsauctions.dto.InspectionAppointmentDto;
+import com.filip2801.cars.carsauctions.exception.BadRequestException;
+import com.filip2801.cars.carsauctions.exception.ResourceNotFoundException;
 import com.filip2801.cars.carsauctions.model.Car;
+import com.filip2801.cars.carsauctions.model.InspectionAppointment;
 import com.filip2801.cars.carsauctions.model.InspectionAppointmentStatus;
-import com.filip2801.cars.carsauctions.repository.InspectionAppointmentRepository;
 import com.filip2801.cars.carsauctions.repository.CarRepository;
+import com.filip2801.cars.carsauctions.repository.InspectionAppointmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+import static com.filip2801.cars.carsauctions.dto.Builders.toAppointmentBookingDto;
+import static com.filip2801.cars.carsauctions.dto.Builders.toAppointmentDto;
+import static com.filip2801.cars.carsauctions.model.InspectionAppointmentStatus.BOOKED;
+import static com.filip2801.cars.carsauctions.model.InspectionAppointmentStatus.INSPECTION_SUCCESSFUL;
 
 @RequiredArgsConstructor
 @Service
@@ -19,31 +29,11 @@ public class InspectionAppointmentService {
     private final CarRepository carRepository;
 
     @Transactional
-    public InspectionAppointmentDto bookAppointment(InspectionAppointmentDto inspectionAppointmentDto) {
-        var car = carRepository.save(toNewCar(inspectionAppointmentDto.car()));
-        var appointment = inspectionAppointmentRepository.save(toNewAppointment(inspectionAppointmentDto, car.getId()));
+    public InspectionAppointmentBookingDto bookAppointment(InspectionAppointmentBookingDto inspectionAppointmentBookingDto) {
+        var car = carRepository.save(toNewCar(inspectionAppointmentBookingDto.car()));
+        var appointment = inspectionAppointmentRepository.save(toNewAppointment(inspectionAppointmentBookingDto, car.getId()));
 
-        return toAppointmentDto(car, appointment);
-    }
-
-    private InspectionAppointmentDto toAppointmentDto(Car car, InspectionAppointment inspectionAppointment) {
-        return new InspectionAppointmentDto(
-                inspectionAppointment.getId(),
-                inspectionAppointment.getLocationId(),
-                inspectionAppointment.getTime(),
-                inspectionAppointment.getCustomerEmailAddress(),
-                inspectionAppointment.getStatus(),
-                toCarDto(car));
-    }
-
-    private CarDto toCarDto(Car car) {
-        return new CarDto(
-                car.getId(),
-                car.getMakeId(),
-                car.getModelId(),
-                car.getVariantId(),
-                car.getManufacturingYear(),
-                car.getRegistrationYear());
+        return toAppointmentBookingDto(car, appointment);
     }
 
     private Car toNewCar(CarDto carDto) {
@@ -56,14 +46,29 @@ public class InspectionAppointmentService {
                 .build();
     }
 
-    private InspectionAppointment toNewAppointment(InspectionAppointmentDto inspectionAppointmentDto, Long carId) {
+    private InspectionAppointment toNewAppointment(InspectionAppointmentBookingDto inspectionAppointmentBookingDto, Long carId) {
         return InspectionAppointment.builder()
                 .carId(carId)
                 .status(InspectionAppointmentStatus.BOOKED)
-                .locationId(inspectionAppointmentDto.locationId())
-                .time(inspectionAppointmentDto.time())
-                .customerEmailAddress(inspectionAppointmentDto.customerEmailAddress())
+                .locationId(inspectionAppointmentBookingDto.locationId())
+                .time(inspectionAppointmentBookingDto.time())
+                .customerEmailAddress(inspectionAppointmentBookingDto.customerEmailAddress())
                 .build();
     }
 
+    public InspectionAppointment changeStatus(Long appointmentId, InspectionAppointmentStatus newStatus) {
+        var appointment = inspectionAppointmentRepository.findById(appointmentId)
+                .orElseThrow(ResourceNotFoundException::new);
+
+        if (newStatus != INSPECTION_SUCCESSFUL || appointment.getStatus() != BOOKED) {
+            throw new BadRequestException();
+        }
+        appointment.finaliseInspection();
+
+        return inspectionAppointmentRepository.save(appointment);
+    }
+
+    public Optional<InspectionAppointment> findById(Long appointmentId) {
+        return inspectionAppointmentRepository.findById(appointmentId);
+    }
 }
