@@ -1,0 +1,17 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: cars-auctions
+  datasource:
+    url: jdbc:postgresql://localhost:15432/cars_auctions
+    username: netop
+    password: netop
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
