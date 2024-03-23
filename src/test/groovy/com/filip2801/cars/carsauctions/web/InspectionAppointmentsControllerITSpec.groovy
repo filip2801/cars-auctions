@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus
 
 import static com.filip2801.cars.carsauctions.TestUtils.uniqueId
 
-class AppointmentsControllerITSpec extends IntegrationTestSpecification {
+class InspectionAppointmentsControllerITSpec extends IntegrationTestSpecification {
 
     def "should book appointment"() {
         given:
@@ -23,7 +23,7 @@ class AppointmentsControllerITSpec extends IntegrationTestSpecification {
         ]
 
         when:
-        var creationResponse = sendPost("appointments", requestPayload)
+        var creationResponse = sendPost("inspection-appointments", requestPayload)
 
         then:
         creationResponse.statusCode == HttpStatus.OK
