@@ -39,7 +39,7 @@ class IntegrationTestSpecification extends Specification {
     @Value('${server.servlet.context-path:/}')
     String contextPath
 
-    private User userLoggedIn
+    protected User userLoggedIn
     private String userPlainPassword
 
     def sendGetForObject(String url) {

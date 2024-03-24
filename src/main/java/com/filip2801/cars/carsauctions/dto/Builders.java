@@ -1,9 +1,6 @@
 package com.filip2801.cars.carsauctions.dto;
 
-import com.filip2801.cars.carsauctions.model.Auction;
-import com.filip2801.cars.carsauctions.model.Car;
-import com.filip2801.cars.carsauctions.model.InspectionAppointment;
-import com.filip2801.cars.carsauctions.model.User;
+import com.filip2801.cars.carsauctions.model.*;
 
 public class Builders {
 
@@ -54,5 +51,12 @@ public class Builders {
                 auction.getStatus());
     }
 
+    public static AuctionSubscriptionDto toAuctionSubscription(AuctionSubscription auctionSubscription) {
+        return new AuctionSubscriptionDto(
+                auctionSubscription.getId(),
+                auctionSubscription.getCarMakeId(),
+                auctionSubscription.getDealerId()
+        );
+    }
 
 }
