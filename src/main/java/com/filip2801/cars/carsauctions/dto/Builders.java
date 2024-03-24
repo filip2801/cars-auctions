@@ -2,6 +2,7 @@ package com.filip2801.cars.carsauctions.dto;
 
 import com.filip2801.cars.carsauctions.model.Car;
 import com.filip2801.cars.carsauctions.model.InspectionAppointment;
+import com.filip2801.cars.carsauctions.model.User;
 
 public class Builders {
 
@@ -33,5 +34,9 @@ public class Builders {
                 car.getVariantId(),
                 car.getManufacturingYear(),
                 car.getRegistrationYear());
+    }
+
+    public static UserDto toUserDto(User user) {
+        return new UserDto(user.getId(), user.getUsername(), null);
     }
 }
