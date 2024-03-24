@@ -71,4 +71,8 @@ public class InspectionAppointmentService {
     public Optional<InspectionAppointment> findById(Long appointmentId) {
         return inspectionAppointmentRepository.findById(appointmentId);
     }
+
+    public Optional<InspectionAppointment> findByCarId(Long carId) {
+        return inspectionAppointmentRepository.findByCarId( carId);
+    }
 }
