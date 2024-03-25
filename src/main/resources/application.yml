@@ -21,3 +21,19 @@ spring:
       initialize-schema: always
     properties:
       org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+  rabbitmq:
+    host: localhost
+    port: 5662
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: AUTO
+        concurrency: 3
+        retry:
+          enabled: true
+          initial-interval: 100
+          max-interval: 1000
+          max-attempts: 5
+          multiplier: 2

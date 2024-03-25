@@ -3,7 +3,9 @@ package com.filip2801.cars.carsauctions.auction.domain;
 import com.filip2801.cars.carsauctions.auction.infrastructure.dto.AuctionBidDto;
 import com.filip2801.cars.carsauctions.auction.infrastructure.dto.AuctionDto;
 import com.filip2801.cars.carsauctions.auction.infrastructure.dto.Builders;
+import com.filip2801.cars.carsauctions.auction.infrastructure.messaging.AuctionEventPublisher;
 import com.filip2801.cars.carsauctions.common.exception.BadRequestException;
+import com.filip2801.cars.carsauctions.common.exception.ResourceNotFoundException;
 import com.filip2801.cars.carsauctions.common.security.CustomUserDetails;
 import com.filip2801.cars.carsauctions.common.security.UserContextHolder;
 import com.filip2801.cars.carsauctions.inspection.domain.InspectionAppointmentService;
@@ -25,6 +27,7 @@ public class AuctionService {
     private final AuctionRepository auctionRepository;
     private final AuctionBidRepository auctionBidRepository;
     private final InspectionAppointmentService inspectionAppointmentService;
+    private final AuctionEventPublisher auctionEventPublisher;
 
     public AuctionDto startAuction(AuctionDto auctionDto) {
         validateInspectionStatus(auctionDto.carId());
@@ -72,12 +75,36 @@ public class AuctionService {
         return Builders.toAuctionBitDto(bid);
     }
 
+    @Transactional
     public void endExpiredAuctions() {
         var auctionsToClose = auctionRepository.findAllByStatusAndExpectedEndTimeBefore(AuctionStatus.RUNNING, LocalDateTime.now());
 
+        auctionsToClose.forEach(Auction::markAsEnded);
+        auctionRepository.saveAll(auctionsToClose);
+
         auctionsToClose.forEach(auction -> {
-            auction.markAsEnded();
-            // todo publish event
+            var auctionDto = Builders.toAuctionDto(auction);
+            auctionEventPublisher.publishAuctionEndedEvent(auctionDto);
         });
+    }
+
+    @Transactional
+    public void finishWithSatisfiedResult(Long auctionId) {
+        var auction = auctionRepository.findById(auctionId).orElseThrow(ResourceNotFoundException::new);
+        auction.complete();
+        auctionRepository.save(auction);
+
+        var auctionDto = Builders.toAuctionDto(auction);
+        auctionEventPublisher.publishAuctionResultSatisfied(auctionDto);
+    }
+
+    @Transactional
+    public void finishWithNotSatisfiedResult(Long auctionId) {
+        var auction = auctionRepository.findById(auctionId).orElseThrow(ResourceNotFoundException::new);
+        auction.finishWithoutSatisfiedResult();
+        auctionRepository.save(auction);
+
+        var auctionDto = Builders.toAuctionDto(auction);
+        auctionEventPublisher.publishAuctionResultNotSatisfied(auctionDto);
     }
 }

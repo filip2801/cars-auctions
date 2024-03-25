@@ -1,11 +1,16 @@
 package com.filip2801.cars.carsauctions.auction.domain
 
+import com.filip2801.cars.carsauctions.auction.infrastructure.messaging.AuctionEventPublisher
 import com.filip2801.cars.carsauctions.testutils.SimpleIntegrationTestSpecification
+import com.filip2801.cars.carsauctions.testutils.TestUtils
+import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Subject
 
+import java.time.LocalDateTime
 import java.util.concurrent.Executors
 
+import static com.filip2801.cars.carsauctions.auction.domain.AuctionStatus.*
 import static com.filip2801.cars.carsauctions.testutils.TestUtils.isDateCloseToNow
 import static com.filip2801.cars.carsauctions.testutils.TestUtils.uniqueId
 
@@ -15,6 +20,9 @@ class AuctionServiceITSpec extends SimpleIntegrationTestSpecification {
     AuctionRepository auctionRepository
     @Autowired
     AuctionBidRepository auctionBidRepository
+
+    @SpringBean
+    AuctionEventPublisher auctionEventPublisher = Mock()
 
     @Subject
     @Autowired
@@ -82,6 +90,72 @@ class AuctionServiceITSpec extends SimpleIntegrationTestSpecification {
             assert auctionBids.size() == numberOfBids
             assert auctionBids.findAll { it.status == AuctionBidStatus.MADE }.size() > 0
         }
+    }
+
+    def "should mark auctions as ended"() {
+        given:
+        var auction1 = Auction.start(TestUtils.uniqueId(), 'test@email.com', 100)
+        var auction2 = Auction.start(TestUtils.uniqueId(), 'test2@email.com', 100)
+        var auction3 = Auction.start(TestUtils.uniqueId(), 'test2@email.com', 100)
+        auction1.expectedEndTime = LocalDateTime.now().minusSeconds(1)
+        auction2.expectedEndTime = LocalDateTime.now().minusSeconds(1)
+
+        auctionRepository.saveAll([auction1, auction2, auction3])
+
+        when:
+        auctionService.endExpiredAuctions()
+
+        then:
+        var updatedAction1 = auctionRepository.findById(auction1.id).get()
+        updatedAction1.status == ENDED
+
+        var updatedAction2 = auctionRepository.findById(auction2.id).get()
+        updatedAction2.status == ENDED
+
+        var updatedAction3 = auctionRepository.findById(auction3.id).get()
+        updatedAction3.status == RUNNING
+
+        and:
+        1 * auctionEventPublisher.publishAuctionEndedEvent({ it.id == auction1.id && it.status == ENDED })
+        1 * auctionEventPublisher.publishAuctionEndedEvent({ it.id == auction2.id && it.status == ENDED })
+    }
+
+    def "should complete auction"() {
+        given:
+        var auction = Auction.start(TestUtils.uniqueId(), 'test@email.com', 100)
+        auction.expectedEndTime = LocalDateTime.now().minusSeconds(1)
+        auction.markAsEnded()
+
+        auctionRepository.save(auction)
+
+        when:
+        auctionService.finishWithSatisfiedResult(auction.id)
+
+        then:
+        var updatedAction = auctionRepository.findById(auction.id).get()
+        updatedAction.status == COMPLETED
+
+        and:
+        1 * auctionEventPublisher.publishAuctionResultSatisfied({ it.status == COMPLETED })
+    }
+
+    def "should finish auction without finding winner"() {
+        given:
+        var auction = Auction.start(TestUtils.uniqueId(), 'test@email.com', 100)
+        auction.expectedEndTime = LocalDateTime.now().minusSeconds(1)
+        auction.markAsEnded()
+
+        auctionRepository.save(auction)
+
+        when:
+        auctionService.finishWithNotSatisfiedResult(auction.id)
+
+        then:
+        var updatedAction = auctionRepository.findById(auction.id).get()
+        updatedAction.status == FINISHED_WITHOUT_WINNER
+
+        and:
+        1 * auctionEventPublisher.publishAuctionResultNotSatisfied({ it.status == FINISHED_WITHOUT_WINNER })
     }
 
 }

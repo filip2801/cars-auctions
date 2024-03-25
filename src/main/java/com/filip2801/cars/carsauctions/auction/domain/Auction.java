@@ -97,4 +97,14 @@ public class Auction {
     private boolean isLateBid(LocalDateTime bidTime) {
         return bidTime.isAfter(expectedEndTime.minusMinutes(EXTEND_TIME_IF_BID_IN_LAST_MINUTES));
     }
+
+    public void complete() {
+        validateIsTrue(status == AuctionStatus.ENDED, "Auction has status " + status);
+        this.status = AuctionStatus.COMPLETED;
+    }
+
+    public void finishWithoutSatisfiedResult() {
+        validateIsTrue(status == AuctionStatus.ENDED, "Auction has status " + status);
+        this.status = AuctionStatus.FINISHED_WITHOUT_WINNER;
+    }
 }

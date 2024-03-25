@@ -249,4 +249,33 @@ class AuctionTest extends Specification {
         thrown IllegalStateException
     }
 
+    def "should complete ended auction"() {
+        given:
+        var carId = uniqueId()
+
+        var auction = Auction.start(carId, 'test@example.com', 100)
+        auction.expectedEndTime = LocalDateTime.now().minusNanos(1)
+        auction.markAsEnded()
+
+        when:
+        auction.complete()
+
+        then:
+        auction.status == AuctionStatus.COMPLETED
+    }
+
+    def "should finish ended auction without finding winner"() {
+        given:
+        var carId = uniqueId()
+
+        var auction = Auction.start(carId, 'test@example.com', 100)
+        auction.expectedEndTime = LocalDateTime.now().minusNanos(1)
+        auction.markAsEnded()
+
+        when:
+        auction.finishWithoutSatisfiedResult()
+
+        then:
+        auction.status == AuctionStatus.FINISHED_WITHOUT_WINNER
+    }
 }

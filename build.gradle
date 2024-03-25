@@ -22,6 +22,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.retry:spring-retry'
 	implementation 'org.springframework.boot:spring-boot-starter-quartz'
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
 	runtimeOnly 'org.postgresql:postgresql'
 
@@ -32,6 +33,7 @@ dependencies {
 	testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
 	testImplementation 'org.spockframework:spock-spring:2.3-groovy-4.0'
 	testImplementation "org.testcontainers:postgresql:1.19.7"
+	testImplementation "org.testcontainers:rabbitmq:1.19.7"
 	testImplementation 'com.tngtech.archunit:archunit-junit5:1.2.1'
 
 }
