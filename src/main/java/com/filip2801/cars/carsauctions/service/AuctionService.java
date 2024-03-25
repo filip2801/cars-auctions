@@ -16,12 +16,12 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class AuctionService {
-
-    private static final int AUCTION_DURATION_MINUTES = 24;
 
     private final AuctionRepository auctionRepository;
     private final AuctionBidRepository auctionBidRepository;
@@ -58,6 +58,7 @@ public class AuctionService {
 
         if (bidResult.bidStatus() == AuctionBidStatus.MADE) {
             auctionRepository.save(auction);
+            // todo publish event, change other bids statuses
         }
 
         AuctionBid bid = AuctionBid.builder()
@@ -72,4 +73,12 @@ public class AuctionService {
         return Builders.toAuctionBitDto(bid);
     }
 
+    public void endExpiredAuctions() {
+        var auctionsToClose = auctionRepository.findAllByStatusAndExpectedEndTimeBefore(AuctionStatus.RUNNING, LocalDateTime.now());
+
+        auctionsToClose.forEach(auction -> {
+            auction.markAsEnded();
+            // todo publish event
+        });
+    }
 }

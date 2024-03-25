@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import static com.filip2801.cars.carsauctions.utils.Validate.validateIsTrue;
+
 @Getter
 @NoArgsConstructor
 @Entity
@@ -61,6 +63,13 @@ public class Auction {
         }
 
         return new BidResult(AuctionBidStatus.MADE, bidTime);
+    }
+
+    public void markAsEnded() {
+        validateIsTrue(status == AuctionStatus.RUNNING, "Auction has status " + status);
+        validateIsTrue(expectedEndTime.isBefore(LocalDateTime.now()), "Auction is not expired");
+
+        this.status = AuctionStatus.ENDED;
     }
 
     private boolean isBidRejected(LocalDateTime bidTime, Integer bidValue) {

@@ -205,4 +205,47 @@ class AuctionTest extends Specification {
         auction.leadingBidderId == leadingBidderId
     }
 
+    def "should mark auction as ended"() {
+        given:
+        var carId = uniqueId()
+
+        var auction = Auction.start(carId, 'test@example.com', 100)
+        auction.expectedEndTime = LocalDateTime.now().minusNanos(1)
+
+        when:
+        auction.markAsEnded()
+
+        then:
+        auction.status == AuctionStatus.ENDED
+    }
+
+    def "should not mark auction as ended when it is not running"() {
+        given:
+        var carId = uniqueId()
+
+        var auction = Auction.start(carId, 'test@example.com', 100)
+        auction.expectedEndTime = LocalDateTime.now().minusNanos(1)
+        auction.markAsEnded()
+
+        when:
+        auction.markAsEnded()
+
+        then:
+        thrown IllegalStateException
+    }
+
+
+    def "should not mark auction as ended when it is not expired"() {
+        given:
+        var carId = uniqueId()
+
+        var auction = Auction.start(carId, 'test@example.com', 100)
+
+        when:
+        auction.markAsEnded()
+
+        then:
+        thrown IllegalStateException
+    }
+
 }
