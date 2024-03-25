@@ -134,9 +134,6 @@ class AuctionServiceITSpec extends SimpleIntegrationTestSpecification {
         then:
         var updatedAction = auctionRepository.findById(auction.id).get()
         updatedAction.status == COMPLETED
-
-        and:
-        1 * auctionEventPublisher.publishAuctionResultSatisfied({ it.status == COMPLETED })
     }
 
     def "should finish auction without finding winner"() {
@@ -153,9 +150,6 @@ class AuctionServiceITSpec extends SimpleIntegrationTestSpecification {
         then:
         var updatedAction = auctionRepository.findById(auction.id).get()
         updatedAction.status == FINISHED_WITHOUT_WINNER
-
-        and:
-        1 * auctionEventPublisher.publishAuctionResultNotSatisfied({ it.status == FINISHED_WITHOUT_WINNER })
     }
 
 }

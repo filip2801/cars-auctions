@@ -88,24 +88,16 @@ public class AuctionService {
         });
     }
 
-    @Transactional
     public void finishWithSatisfiedResult(Long auctionId) {
         var auction = auctionRepository.findById(auctionId).orElseThrow(ResourceNotFoundException::new);
         auction.complete();
         auctionRepository.save(auction);
-
-        var auctionDto = Builders.toAuctionDto(auction);
-        auctionEventPublisher.publishAuctionResultSatisfied(auctionDto);
     }
 
-    @Transactional
     public void finishWithNotSatisfiedResult(Long auctionId) {
         var auction = auctionRepository.findById(auctionId).orElseThrow(ResourceNotFoundException::new);
         auction.finishWithoutSatisfiedResult();
         auctionRepository.save(auction);
-
-        var auctionDto = Builders.toAuctionDto(auction);
-        auctionEventPublisher.publishAuctionResultNotSatisfied(auctionDto);
     }
 
     public AuctionDto runAgain(Long auctionId) {
