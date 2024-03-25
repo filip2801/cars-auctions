@@ -20,7 +20,7 @@ import static com.filip2801.cars.carsauctions.TestUtils.uniqueString
 
 @ContextConfiguration(initializers = DbInitializer.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = RestTemplateTestConfig)
-class IntegrationTestSpecification extends Specification {
+class ControllerIntegrationTestSpecification extends Specification {
 
     @Autowired
     RestTemplate restTemplate

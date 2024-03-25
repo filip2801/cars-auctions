@@ -1,11 +1,11 @@
 package com.filip2801.cars.carsauctions.web
 
-import com.filip2801.cars.carsauctions.IntegrationTestSpecification
+import com.filip2801.cars.carsauctions.ControllerIntegrationTestSpecification
 import org.springframework.http.HttpStatus
 
 import static com.filip2801.cars.carsauctions.TestUtils.uniqueString
 
-class DealersControllerITSpec extends IntegrationTestSpecification {
+class DealersControllerITSpec extends ControllerIntegrationTestSpecification {
 
     def "should register new dealer"() {
         given:

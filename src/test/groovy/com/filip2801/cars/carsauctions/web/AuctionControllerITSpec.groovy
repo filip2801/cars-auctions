@@ -1,6 +1,6 @@
 package com.filip2801.cars.carsauctions.web
 
-import com.filip2801.cars.carsauctions.IntegrationTestSpecification
+import com.filip2801.cars.carsauctions.ControllerIntegrationTestSpecification
 import com.filip2801.cars.carsauctions.model.Auction
 import com.filip2801.cars.carsauctions.repository.AuctionRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 import static com.filip2801.cars.carsauctions.TestUtils.isDateCloseToNow
 import static com.filip2801.cars.carsauctions.TestUtils.uniqueId
 
-class AuctionControllerITSpec extends IntegrationTestSpecification {
+class AuctionControllerITSpec extends ControllerIntegrationTestSpecification {
 
     @Autowired
     AuctionRepository auctionRepository

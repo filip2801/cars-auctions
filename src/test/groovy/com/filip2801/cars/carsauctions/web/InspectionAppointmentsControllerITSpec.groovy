@@ -1,11 +1,11 @@
 package com.filip2801.cars.carsauctions.web
 
-import com.filip2801.cars.carsauctions.IntegrationTestSpecification
+import com.filip2801.cars.carsauctions.ControllerIntegrationTestSpecification
 import org.springframework.http.HttpStatus
 
 import static com.filip2801.cars.carsauctions.TestUtils.uniqueId
 
-class InspectionAppointmentsControllerITSpec extends IntegrationTestSpecification {
+class InspectionAppointmentsControllerITSpec extends ControllerIntegrationTestSpecification {
 
     def "should book appointment"() {
         given:
