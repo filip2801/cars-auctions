@@ -107,4 +107,22 @@ public class AuctionService {
         var auctionDto = Builders.toAuctionDto(auction);
         auctionEventPublisher.publishAuctionResultNotSatisfied(auctionDto);
     }
+
+    public AuctionDto runAgain(Long auctionId) {
+        var firstAuction = auctionRepository.findById(auctionId).orElseThrow(ResourceNotFoundException::new);
+
+        if (firstAuction.getStatus() != AuctionStatus.FINISHED_WITHOUT_WINNER) {
+            throw new BadRequestException();
+        }
+
+        Auction newAuction = Auction.start(
+                firstAuction.getCarId(),
+                firstAuction.getCustomerEmailAddress(),
+                firstAuction.getAnchorBid());
+
+        auctionRepository.save(newAuction);
+
+        return Builders.toAuctionDto(newAuction);
+    }
+
 }

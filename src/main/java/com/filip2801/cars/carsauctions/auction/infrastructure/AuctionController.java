@@ -40,4 +40,10 @@ public class AuctionController {
         return auctionBidDto;
     }
 
+    @PostMapping(value = "/{auctionId}/run-again", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('AGENT')")
+    AuctionDto runAuctionAgain(@PathVariable Long auctionId) {
+        return auctionService.runAgain(auctionId);
+    }
+
 }
