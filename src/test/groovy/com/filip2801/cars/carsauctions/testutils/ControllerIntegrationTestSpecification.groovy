@@ -19,7 +19,7 @@ import spock.lang.Specification
 
 import static TestUtils.uniqueString
 
-@ContextConfiguration(initializers = DbInitializer.class)
+@ContextConfiguration(initializers = [DbInitializer.class, RabbitMqInitializer.class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = RestTemplateTestConfig)
 @ActiveProfiles("test")
 class ControllerIntegrationTestSpecification extends Specification {
