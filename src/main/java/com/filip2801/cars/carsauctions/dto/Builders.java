@@ -47,7 +47,7 @@ public class Builders {
                 auction.getExpectedEndTime(),
                 auction.getAnchorBid(),
                 auction.getHighestBid(),
-                auction.getLeadingDealerId(),
+                auction.getLeadingBidderId(),
                 auction.getStatus());
     }
 
@@ -59,4 +59,14 @@ public class Builders {
         );
     }
 
+    public static AuctionBidDto toAuctionBitDto(AuctionBid bid) {
+        return new AuctionBidDto(
+                bid.getId(),
+                bid.getDealerId(),
+                bid.getAuctionId(),
+                bid.getBidValue(),
+                bid.getTime(),
+                bid.getStatus()
+        );
+    }
 }

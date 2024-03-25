@@ -1,8 +1,6 @@
 package com.filip2801.cars.carsauctions.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,10 +8,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 public class Auction {
+
+    private static final int EXTEND_TIME_IF_BID_IN_LAST_MINUTES = 2;
+    private static final int LATE_BID_TIME_EXTENSION_MINUTES = 2;
+    private static final int AUCTION_DURATION_MINUTES = 24;
 
     @Id
     @GeneratedValue
@@ -28,8 +28,64 @@ public class Auction {
     private LocalDateTime expectedEndTime;
     private Integer anchorBid;
     private Integer highestBid;
-    private Long leadingDealerId;
+    private Long leadingBidderId;
 
     @Enumerated(EnumType.STRING)
     private AuctionStatus status;
+
+    public static Auction start(Long carId, String customerEmailAddress, Integer anchorBid) {
+        return new Auction(carId, customerEmailAddress, anchorBid);
+    }
+
+    private Auction(Long carId, String customerEmailAddress, Integer anchorBid) {
+        this.carId = carId;
+        this.customerEmailAddress = customerEmailAddress;
+
+        this.startTime = LocalDateTime.now();
+        this.expectedEndTime = startTime.plusMinutes(AUCTION_DURATION_MINUTES);
+        this.anchorBid = anchorBid;
+        this.status = AuctionStatus.RUNNING;
+    }
+
+    public BidResult makeBid(Long bidderId, Integer bidValue) {
+        LocalDateTime bidTime = LocalDateTime.now();
+        if (isBidRejected(bidTime, bidValue)) {
+            return new BidResult(AuctionBidStatus.REJECTED, bidTime);
+        }
+
+        this.leadingBidderId = bidderId;
+        this.highestBid = bidValue;
+
+        if (isLateBid(bidTime)) {
+            extendAuctionTime();
+        }
+
+        return new BidResult(AuctionBidStatus.MADE, bidTime);
+    }
+
+    private boolean isBidRejected(LocalDateTime bidTime, Integer bidValue) {
+        return isBidLowerThanAnchor(bidValue)
+                || isBidLowerThanHighestBid(bidValue)
+                || isBidAfterEndTime(bidTime);
+    }
+
+    private boolean isBidLowerThanAnchor(Integer bidValue) {
+        return bidValue < anchorBid;
+    }
+
+    private boolean isBidLowerThanHighestBid(Integer bidValue) {
+        return highestBid != null && bidValue <= highestBid;
+    }
+
+    private boolean isBidAfterEndTime(LocalDateTime bidTime) {
+        return bidTime.isAfter(expectedEndTime);
+    }
+
+    private void extendAuctionTime() {
+        this.expectedEndTime = this.expectedEndTime.plusMinutes(EXTEND_TIME_IF_BID_IN_LAST_MINUTES);
+    }
+
+    private boolean isLateBid(LocalDateTime bidTime) {
+        return bidTime.isAfter(expectedEndTime.minusMinutes(EXTEND_TIME_IF_BID_IN_LAST_MINUTES));
+    }
 }
