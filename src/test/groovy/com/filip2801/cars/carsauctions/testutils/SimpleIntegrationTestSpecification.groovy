@@ -2,21 +2,14 @@ package com.filip2801.cars.carsauctions.testutils
 
 import com.filip2801.cars.carsauctions.common.security.CustomUserDetails
 import com.filip2801.cars.carsauctions.user.domain.UserRole
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
-import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 import static TestUtils.uniqueId
 import static TestUtils.uniqueString
 
-@ContextConfiguration(initializers = [DbInitializer.class, RabbitMqInitializer.class])
-@SpringBootTest
-@ActiveProfiles("test")
-class SimpleIntegrationTestSpecification extends Specification {
+class SimpleIntegrationTestSpecification extends BaseIntegrationTestSpecification {
 
     CustomUserDetails loggedInUser
 
