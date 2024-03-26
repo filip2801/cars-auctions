@@ -15,6 +15,7 @@ The Cars Auction Platform is designed to facilitate the auction process for cars
 - **Spring Security**: Provides authentication and authorization functionalities.
 - **Quartz Scheduler**: Manages scheduled tasks, such as auction timing controls.
 - **Spring AMQP**: Handles event-driven communication with external systems, enabling real-time updates to auction participants.
+- **RabbitMQ**: Facilitates asynchronous message queuing and inter-service communication.
 - **Lombok**: Reduces boilerplate code for model/data objects.
 - **Maven**: Manages project dependencies and build process.
 - **Spock Framework**: Provides a powerful testing platform, leveraging Groovy for clearer tests.
@@ -23,12 +24,12 @@ The Cars Auction Platform is designed to facilitate the auction process for cars
 ## Setup and Installation
 
 Requirements:
-- JDK 17
-- docker
-- docker-compose
+- ***JDK 17***: java environment
+- ***docker***: to run tests
+- ***docker-compose***:  to start postgres and rabbbitMQ containers
 
 ### Starting application
-#### Start postgres or rabbitmq
+#### Start Postgres or rabbitMQ
 You can start them using docker compose. To do that got to application directory run `docker-compose up -d`.
 To stop containers and remove them run `docker-compose down`.
 
