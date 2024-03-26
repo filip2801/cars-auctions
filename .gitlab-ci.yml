@@ -19,4 +19,5 @@ test:
   artifacts:
     when: always
     reports:
-      junit: build/test-results/test/**/TEST-*.xml
+      - target/surefire-reports/TEST-*.xml
+      - target/failsafe-reports/TEST-*.xml
