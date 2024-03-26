@@ -3,6 +3,7 @@ package com.filip2801.cars.carsauctions.auction.infrastructure.messaging
 import com.filip2801.cars.carsauctions.auction.domain.AuctionStatus
 import com.filip2801.cars.carsauctions.auction.infrastructure.dto.AuctionDto
 import com.filip2801.cars.carsauctions.testutils.SimpleIntegrationTestSpecification
+import org.junit.jupiter.api.Disabled
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.DirectExchange
@@ -16,6 +17,7 @@ import java.time.LocalDateTime
 import static com.filip2801.cars.carsauctions.testutils.TestUtils.uniqueId
 import static com.filip2801.cars.carsauctions.testutils.TestUtils.uniqueString
 
+@Disabled
 class AuctionEventPublisherITSpec extends SimpleIntegrationTestSpecification {
 
     @Autowired

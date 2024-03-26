@@ -9,8 +9,10 @@ import com.filip2801.cars.carsauctions.common.exception.BadRequestException;
 import com.filip2801.cars.carsauctions.common.security.CustomUserDetails;
 import com.filip2801.cars.carsauctions.common.security.UserContextHolder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AuctionSubscriptionService {
@@ -35,6 +37,7 @@ public class AuctionSubscriptionService {
         CarDto carDto = carService.findCarDto(auctionId);
 
         var subscriptions = auctionSubscriptionRepository.findAllByCarMakeId(carDto.makeId());
+        log.debug("Found {} subscriptions", subscriptions.size());
 
         subscriptions.forEach(subscription -> {
             auctionSubscriptionEventPublisher.publishAuctionStartAlerted(

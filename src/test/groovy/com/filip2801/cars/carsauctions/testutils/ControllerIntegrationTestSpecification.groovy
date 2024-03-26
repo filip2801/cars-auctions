@@ -36,6 +36,10 @@ class ControllerIntegrationTestSpecification extends BaseIntegrationTestSpecific
 
     protected UserContext userLoggedIn
 
+    def setup() {
+        loginAsUser(null)
+    }
+
     def sendGetForObject(String url) {
         restTemplate.getForEntity("${getBaseUrl()}/${url}", HashMap)
     }

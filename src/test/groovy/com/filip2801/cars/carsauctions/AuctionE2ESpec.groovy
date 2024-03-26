@@ -8,6 +8,7 @@ import com.filip2801.cars.carsauctions.inspection.domain.InspectionAppointmentRe
 import com.filip2801.cars.carsauctions.inspection.domain.InspectionAppointmentStatus
 import com.filip2801.cars.carsauctions.notifications.domain.NotificationRepository
 import com.filip2801.cars.carsauctions.testutils.ControllerIntegrationTestSpecification
+import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Shared
 import spock.lang.Stepwise
@@ -47,9 +48,9 @@ class AuctionE2ESpec extends ControllerIntegrationTestSpecification {
     @Shared
     def auctionId
 
-    def setup() {
-        loginAsUser(null)
-    }
+
+    @Autowired
+    RabbitAdmin rabbitAdmin
 
     def "should register dealers"() {
         when:
@@ -110,8 +111,8 @@ class AuctionE2ESpec extends ControllerIntegrationTestSpecification {
 
         def requestPayload = [
                 carId               : carId,
-                customerEmailAddress: 'email@test.com',
-                anchorBid           : 100
+                customerEmailAddress: 'e2e@test.com',
+                anchorBid           : 99
         ]
 
         when:
@@ -134,16 +135,16 @@ class AuctionE2ESpec extends ControllerIntegrationTestSpecification {
         loginAsUser(dealer1)
 
         when:
-        sendPost("auctions/$auctionId/bids", [bidValue: 150])
+        sendPost("auctions/$auctionId/bids", [bidValue: 151])
 
         then:
         var bids = auctionBidRepository.findByAuctionId(auctionId)
         bids.size() == 1
         bids.get(0).getStatus() == AuctionBidStatus.MADE
-        bids.get(0).getBidValue() == 150
+        bids.get(0).getBidValue() == 151
 
         var auction = auctionRepository.findById(auctionId).get()
-        auction.highestBid == 150
+        auction.highestBid == 151
         auction.leadingBidderId == dealer1.user.id
     }
 
@@ -152,16 +153,16 @@ class AuctionE2ESpec extends ControllerIntegrationTestSpecification {
         loginAsUser(dealer2)
 
         when:
-        sendPost("auctions/$auctionId/bids", [bidValue: 300])
+        sendPost("auctions/$auctionId/bids", [bidValue: 301])
 
         then:
         var bids = auctionBidRepository.findByAuctionId(auctionId)
         bids.size() == 2
         bids.get(1).getStatus() == AuctionBidStatus.MADE
-        bids.get(1).getBidValue() == 300
+        bids.get(1).getBidValue() == 301
 
         var auction = auctionRepository.findById(auctionId).get()
-        auction.highestBid == 300
+        auction.highestBid == 301
         auction.leadingBidderId == dealer2.user.id
     }
 
@@ -190,7 +191,7 @@ class AuctionE2ESpec extends ControllerIntegrationTestSpecification {
                 locationId: uniqueId(),
                 time      : '2024-05-15T14:30:00',
                 car       : [
-                        customerEmailAddress: 'test@customer.com',
+                        customerEmailAddress: 'e2e@customer.com',
                         makeId              : carMakeId,
                         modelId             : uniqueId(),
                         variantId           : uniqueId(),
