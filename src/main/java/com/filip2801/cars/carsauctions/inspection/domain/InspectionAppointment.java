@@ -18,7 +18,8 @@ import static com.filip2801.cars.carsauctions.common.Validate.validateIsTrue;
 public class InspectionAppointment {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "inspection_appointment_seq")
+    @SequenceGenerator(name = "inspection_appointment_seq", allocationSize = 1)
     private Long id;
 
     @Column(nullable = false)

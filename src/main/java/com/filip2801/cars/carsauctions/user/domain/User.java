@@ -1,6 +1,5 @@
 package com.filip2801.cars.carsauctions.user.domain;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,13 +15,14 @@ import lombok.NoArgsConstructor;
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq")
+    @SequenceGenerator(name = "users_seq", allocationSize = 1)
     Long id;
 
     String username;
     String password;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     UserRole role;
 
 }

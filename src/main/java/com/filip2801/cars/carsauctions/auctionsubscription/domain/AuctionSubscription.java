@@ -1,8 +1,6 @@
 package com.filip2801.cars.carsauctions.auctionsubscription.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class AuctionSubscription {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "auction_subscription_seq")
+    @SequenceGenerator(name = "auction_subscription_seq", allocationSize = 1)
     private Long id;
 
     private Long carMakeId;

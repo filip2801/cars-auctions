@@ -18,7 +18,8 @@ public class Auction {
     private static final int AUCTION_DURATION_MINUTES = 24;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "auction_seq")
+    @SequenceGenerator(name = "auction_seq", allocationSize = 1)
     private Long id;
 
     @Version

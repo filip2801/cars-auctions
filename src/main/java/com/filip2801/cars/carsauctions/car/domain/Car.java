@@ -15,7 +15,8 @@ import lombok.NoArgsConstructor;
 public class Car {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "car_seq")
+    @SequenceGenerator(name = "car_seq", allocationSize = 1)
     Long id;
 
     @Column(nullable = false)

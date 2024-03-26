@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 public class AuctionBid {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "auction_bid_seq")
+    @SequenceGenerator(name = "auction_bid_seq", allocationSize = 1)
     private Long id;
 
     private Long dealerId;

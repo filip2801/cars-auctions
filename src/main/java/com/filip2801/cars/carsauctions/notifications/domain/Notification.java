@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class Notification {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_seq")
+    @SequenceGenerator(name = "notification_seq", allocationSize = 1)
     Long id;
 
     Long auctionId;
