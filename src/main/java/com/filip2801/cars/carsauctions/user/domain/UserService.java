@@ -1,5 +1,6 @@
 package com.filip2801.cars.carsauctions.user.domain;
 
+import com.filip2801.cars.carsauctions.common.exception.ResourceNotFoundException;
 import com.filip2801.cars.carsauctions.user.infrastructure.dto.Builders;
 import com.filip2801.cars.carsauctions.user.infrastructure.dto.UserDto;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class UserService {
     private UserDto registerNewUser(UserDto userDto, UserRole role) {
         User user = User.builder()
                 .username(userDto.username())
-                .password(passwordEncoder.encode(userDto.password()))
+                .password(encodePassword(userDto.password()))
                 .role(role)
                 .build();
 
@@ -41,4 +42,16 @@ public class UserService {
                 .map(Builders::toUserDto)
                 .collect(Collectors.toList());
     }
+
+    public UserDto changePassword(Long userId, String password) {
+        User user = userRepository.findById(userId).orElseThrow(ResourceNotFoundException::new);
+        user.updatePassword(encodePassword(password));
+        userRepository.save(user);
+        return Builders.toUserDto(user);
+    }
+
+    private String encodePassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+
 }

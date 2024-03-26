@@ -25,4 +25,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     UserRole role;
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }
