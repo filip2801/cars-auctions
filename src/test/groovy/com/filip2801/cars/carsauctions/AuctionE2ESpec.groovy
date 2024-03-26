@@ -1,10 +1,12 @@
 package com.filip2801.cars.carsauctions
 
 import com.filip2801.cars.carsauctions.auction.domain.*
+import com.filip2801.cars.carsauctions.auctionsubscription.domain.AuctionSubscriptionRepository
 import com.filip2801.cars.carsauctions.car.domain.CarRepository
 import com.filip2801.cars.carsauctions.car.domain.CarStatus
 import com.filip2801.cars.carsauctions.inspection.domain.InspectionAppointmentRepository
 import com.filip2801.cars.carsauctions.inspection.domain.InspectionAppointmentStatus
+import com.filip2801.cars.carsauctions.notifications.domain.NotificationRepository
 import com.filip2801.cars.carsauctions.testutils.ControllerIntegrationTestSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Shared
@@ -27,14 +29,36 @@ class AuctionE2ESpec extends ControllerIntegrationTestSpecification {
     InspectionAppointmentRepository appointmentRepository
     @Autowired
     AuctionService auctionService
+    @Autowired
+    AuctionSubscriptionRepository auctionSubscriptionRepository
+    @Autowired
+    NotificationRepository notificationRepository
 
-
+    @Shared
+    UserContext dealer1
+    @Shared
+    UserContext dealer2
     @Shared
     def appointmentId
     @Shared
     def carId
     @Shared
+    def carMakeId = uniqueId()
+    @Shared
     def auctionId
+
+    def setup() {
+        loginAsUser(null)
+    }
+
+    def "should register dealers"() {
+        when:
+        dealer1 = mockDealerUser()
+        dealer2 = mockDealerUser()
+
+        then:
+        true
+    }
 
     def "should register new appointment"() {
         given:
@@ -62,7 +86,23 @@ class AuctionE2ESpec extends ControllerIntegrationTestSpecification {
         inspectionAppointment.status == InspectionAppointmentStatus.INSPECTION_SUCCESSFUL
     }
 
-    // todo subscriptions
+    def "should subscribe to auction"() {
+        given:
+        def requestPayload = [carMakeId: carMakeId]
+
+        when:
+        loginAsUser(dealer1)
+        sendPost("auction-subscriptions", requestPayload)
+
+        and:
+        loginAsUser(dealer2)
+        sendPost("auction-subscriptions", requestPayload)
+
+        then:
+        var subscriptions = auctionSubscriptionRepository.findAllByCarMakeId(carMakeId)
+        subscriptions.find { it.dealerId == dealer1.user.id }
+        subscriptions.find { it.dealerId == dealer2.user.id }
+    }
 
     def "should start auction"() {
         given:
@@ -82,11 +122,16 @@ class AuctionE2ESpec extends ControllerIntegrationTestSpecification {
         var auctions = auctionRepository.findAllByCarId(carId)
         auctions.size() == 1
         auctions.get(0).getStatus() == AuctionStatus.RUNNING
+
+        eventually {
+            assert notificationRepository.findAllByUserId(dealer1.user.id).find { it.auctionId == auctionId }
+            assert notificationRepository.findAllByUserId(dealer2.user.id).find { it.auctionId == auctionId }
+        }
     }
 
     def "should bid first time"() {
         given:
-        mockDealerUser()
+        loginAsUser(dealer1)
 
         when:
         sendPost("auctions/$auctionId/bids", [bidValue: 150])
@@ -99,12 +144,12 @@ class AuctionE2ESpec extends ControllerIntegrationTestSpecification {
 
         var auction = auctionRepository.findById(auctionId).get()
         auction.highestBid == 150
-        auction.leadingBidderId == userLoggedIn.id
+        auction.leadingBidderId == dealer1.user.id
     }
 
     def "should bid second time"() {
         given:
-        mockDealerUser()
+        loginAsUser(dealer2)
 
         when:
         sendPost("auctions/$auctionId/bids", [bidValue: 300])
@@ -117,7 +162,7 @@ class AuctionE2ESpec extends ControllerIntegrationTestSpecification {
 
         var auction = auctionRepository.findById(auctionId).get()
         auction.highestBid == 300
-        auction.leadingBidderId == userLoggedIn.id
+        auction.leadingBidderId == dealer2.user.id
     }
 
     def "should end auction"() {
@@ -142,7 +187,7 @@ class AuctionE2ESpec extends ControllerIntegrationTestSpecification {
                 time      : '2024-05-15T14:30:00',
                 car       : [
                         customerEmailAddress: 'test@customer.com',
-                        makeId              : uniqueId(),
+                        makeId              : carMakeId,
                         modelId             : uniqueId(),
                         variantId           : uniqueId(),
                         manufacturingYear   : 2015,

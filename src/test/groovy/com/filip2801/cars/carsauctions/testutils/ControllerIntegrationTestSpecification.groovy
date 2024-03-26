@@ -34,8 +34,7 @@ class ControllerIntegrationTestSpecification extends BaseIntegrationTestSpecific
     @Value('${server.servlet.context-path:/}')
     String contextPath
 
-    protected User userLoggedIn
-    private String userPlainPassword
+    protected UserContext userLoggedIn
 
     def sendGetForObject(String url) {
         restTemplate.getForEntity("${getBaseUrl()}/${url}", HashMap)
@@ -58,7 +57,7 @@ class ControllerIntegrationTestSpecification extends BaseIntegrationTestSpecific
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         if (userLoggedIn != null) {
-            String auth = userLoggedIn.getUsername() + ":" + userPlainPassword
+            String auth = userLoggedIn.user.getUsername() + ":" + userLoggedIn.plainTextPassword
             byte[] encodedAuth = Base64.encoder.encode(auth.bytes);
             String authHeader = "Basic " + new String(encodedAuth);
             headers.set("Authorization", authHeader)
@@ -67,19 +66,25 @@ class ControllerIntegrationTestSpecification extends BaseIntegrationTestSpecific
         return new HttpEntity<>(requestPayload, headers);
     }
 
-    void mockAgentUser() {
+    void loginAsUser(UserContext newUserContext) {
+        userLoggedIn = newUserContext
+    }
+
+    UserContext mockAgentUser() {
         mockUser(UserRole.AGENT)
     }
 
-    void mockDealerUser() {
+    UserContext mockDealerUser() {
         mockUser(UserRole.DEALER)
     }
 
-    private void mockUser(UserRole role) {
-        userPlainPassword = uniqueString()
-        var encryptedPassword = passwordEncoder.encode(userPlainPassword)
-        userLoggedIn = new User(null, uniqueString(), encryptedPassword, role)
-        userRepository.save(userLoggedIn)
+    private UserContext mockUser(UserRole role) {
+        var plainTextPassword = uniqueString()
+        var encryptedPassword = passwordEncoder.encode(plainTextPassword)
+        var user = new User(null, uniqueString(), encryptedPassword, role)
+        userRepository.save(user)
+
+        userLoggedIn = new UserContext(user, plainTextPassword)
     }
 
     private HttpEntity<Object> entityWithHeaders() {
@@ -104,4 +109,17 @@ class ControllerIntegrationTestSpecification extends BaseIntegrationTestSpecific
         org.springframework.web.client.HttpClientErrorException$NotFound
     }
 
+    class UserContext {
+        User user
+        String plainTextPassword
+
+        UserContext(User user, String plainTextPassword) {
+            this.user = user
+            this.plainTextPassword = plainTextPassword
+        }
+    }
+
+    User getLoggedInUser() {
+        return userLoggedIn.user
+    }
 }

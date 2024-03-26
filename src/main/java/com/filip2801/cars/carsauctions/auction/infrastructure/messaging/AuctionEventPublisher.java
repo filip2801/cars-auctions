@@ -3,6 +3,7 @@ package com.filip2801.cars.carsauctions.auction.infrastructure.messaging;
 import com.filip2801.cars.carsauctions.auction.infrastructure.dto.AuctionDto;
 import com.filip2801.cars.carsauctions.auction.infrastructure.dto.AuctionEndedEvent;
 import com.filip2801.cars.carsauctions.auction.infrastructure.dto.AuctionResultSatisfiedEvent;
+import com.filip2801.cars.carsauctions.auction.infrastructure.dto.AuctionStartedEvent;
 import com.filip2801.cars.carsauctions.common.messaging.EventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,11 @@ import org.springframework.stereotype.Component;
 public class AuctionEventPublisher {
 
     private final EventPublisher eventPublisher;
+
+    public void publishAuctionStartedEvent(AuctionDto auctionDto) {
+        var event = new AuctionStartedEvent(auctionDto);
+        eventPublisher.publishEvent(event, RabbitMqExchanges.AUCTIONS_EVENTS, RabbitMqRoutingKeys.AUCTION_STARTED);
+    }
 
     public void publishAuctionEndedEvent(AuctionDto auctionDto) {
         var event = new AuctionEndedEvent(auctionDto);

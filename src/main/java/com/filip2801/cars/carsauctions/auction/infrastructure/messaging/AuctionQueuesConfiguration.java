@@ -7,11 +7,11 @@ import org.springframework.context.annotation.Configuration;
 
 @RequiredArgsConstructor
 @Configuration
-class QueuesConfiguration {
+class AuctionQueuesConfiguration {
 
-    public static final String AUCTION_ENDED_QUEUE = "auctions.auctionEnded";
-    public static final String AUCTION_RESULT_SATISFIED_QUEUE = "auctions.resultSatisfied";
-    public static final String AUCTION_RESULT_NOT_SATISFIED_QUEUE = "auctions.resultNotSatisfied";
+    static final String AUCTION_ENDED_QUEUE = "auctions.auctionEnded";
+    static final String AUCTION_RESULT_SATISFIED_QUEUE = "auctions.resultSatisfied";
+    static final String AUCTION_RESULT_NOT_SATISFIED_QUEUE = "auctions.resultNotSatisfied";
 
     private final RabbitQueueAdmin rabbitQueueAdmin;
 

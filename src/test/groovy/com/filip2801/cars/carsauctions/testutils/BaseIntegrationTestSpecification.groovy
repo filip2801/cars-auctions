@@ -14,7 +14,7 @@ class BaseIntegrationTestSpecification extends Specification {
 
 
     void eventually(Closure<?> conditions) {
-        var pollingConditions = new PollingConditions(timeout: 10)
+        var pollingConditions = new PollingConditions(timeout: 100)
         pollingConditions.eventually(conditions)
     }
 

@@ -2,6 +2,7 @@ package com.filip2801.cars.carsauctions.car.domain;
 
 import com.filip2801.cars.carsauctions.car.infrastructure.dto.Builders;
 import com.filip2801.cars.carsauctions.car.infrastructure.dto.CarDto;
+import com.filip2801.cars.carsauctions.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +30,11 @@ public class CarService {
                 .manufacturingYear(carDto.manufacturingYear())
                 .status(CarStatus.TO_SELL)
                 .build();
+    }
+
+    public CarDto findCarDto(Long carId) {
+        return carRepository.findById(carId)
+                .map(Builders::toCarDto)
+                .orElseThrow(ResourceNotFoundException::new);
     }
 }

@@ -21,7 +21,7 @@ class AuctionSubscriptionControllerSpec extends ControllerIntegrationTestSpecifi
         response.statusCode == HttpStatus.OK
         response.body.id
         response.body.carMakeId == requestPayload.carMakeId
-        response.body.dealerId == userLoggedIn.getId()
+        response.body.dealerId == getLoggedInUser().getId()
     }
 
 }

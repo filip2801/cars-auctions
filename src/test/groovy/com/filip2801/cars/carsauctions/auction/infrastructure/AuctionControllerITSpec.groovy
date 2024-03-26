@@ -97,7 +97,7 @@ class AuctionControllerITSpec extends ControllerIntegrationTestSpecification {
         response.statusCode == HttpStatus.OK
         response.body.id
         response.body.auctionId == auction.id
-        response.body.dealerId == userLoggedIn.id
+        response.body.dealerId == getLoggedInUser().id
         response.body.bidValue == requestPayload.bidValue
         response.body.status == 'MADE'
         isDateCloseToNow(parseDate(response.body.time), 1000)

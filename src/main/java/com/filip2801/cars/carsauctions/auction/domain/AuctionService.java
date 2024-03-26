@@ -29,6 +29,7 @@ public class AuctionService {
     private final InspectionAppointmentService inspectionAppointmentService;
     private final AuctionEventPublisher auctionEventPublisher;
 
+    @Transactional
     public AuctionDto startAuction(AuctionDto auctionDto) {
         validateInspectionStatus(auctionDto.carId());
 
@@ -39,7 +40,10 @@ public class AuctionService {
 
         auctionRepository.save(auction);
 
-        return Builders.toAuctionDto(auction);
+        AuctionDto startedAuctionDto = Builders.toAuctionDto(auction);
+        auctionEventPublisher.publishAuctionStartedEvent(startedAuctionDto);
+
+        return startedAuctionDto;
     }
 
     private void validateInspectionStatus(Long carId) {

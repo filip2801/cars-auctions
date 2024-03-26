@@ -19,19 +19,19 @@ public class AuctionEventListener {
     private final AuctionSatisfactionService auctionSatisfactionService;
     private final AuctionService auctionService;
 
-    @RabbitListener(queues = QueuesConfiguration.AUCTION_ENDED_QUEUE)
+    @RabbitListener(queues = AuctionQueuesConfiguration.AUCTION_ENDED_QUEUE)
     public void onAuctionEnded(@Payload AuctionEndedEvent event) {
         log.info("Handling {} ", event);
         auctionSatisfactionService.checkResultSatisfaction(event.auction());
     }
 
-    @RabbitListener(queues = QueuesConfiguration.AUCTION_RESULT_SATISFIED_QUEUE)
+    @RabbitListener(queues = AuctionQueuesConfiguration.AUCTION_RESULT_SATISFIED_QUEUE)
     public void onAuctionResultSatisfiedEvent(@Payload AuctionResultSatisfiedEvent event) {
         log.info("Handling {} ", event);
         auctionService.finishWithSatisfiedResult(event.auction().id());
     }
 
-    @RabbitListener(queues = QueuesConfiguration.AUCTION_RESULT_NOT_SATISFIED_QUEUE)
+    @RabbitListener(queues = AuctionQueuesConfiguration.AUCTION_RESULT_NOT_SATISFIED_QUEUE)
     public void onAuctionResultNotSatisfiedEvent(@Payload AuctionResultNotSatisfiedEvent event) {
         log.info("Handling {} ", event);
         auctionService.finishWithNotSatisfiedResult(event.auction().id());
