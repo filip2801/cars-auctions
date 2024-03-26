@@ -37,4 +37,10 @@ public class CarService {
                 .map(Builders::toCarDto)
                 .orElseThrow(ResourceNotFoundException::new);
     }
+
+    public void assignWinner(Long carId, Long winnerId) {
+        var car = carRepository.findById(carId).orElseThrow(ResourceNotFoundException::new);
+        car.assignWinner(winnerId);
+        carRepository.save(car);
+    }
 }

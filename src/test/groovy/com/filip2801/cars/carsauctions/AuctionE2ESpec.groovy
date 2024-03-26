@@ -179,6 +179,10 @@ class AuctionE2ESpec extends ControllerIntegrationTestSpecification {
             var updatedAuction = auctionRepository.findById(auctionId).get()
             assert updatedAuction.status == AuctionStatus.COMPLETED
         }
+
+        var car = carRepository.findById(carId).get()
+        car.status == CarStatus.SOLD
+        car.winnerId == dealer2.user.id
     }
 
     private LinkedHashMap<String, Serializable> someAppointmentRequestPayload() {

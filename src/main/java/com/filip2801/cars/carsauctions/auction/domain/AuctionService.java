@@ -96,6 +96,8 @@ public class AuctionService {
         var auction = auctionRepository.findById(auctionId).orElseThrow(ResourceNotFoundException::new);
         auction.complete();
         auctionRepository.save(auction);
+
+        auctionEventPublisher.publishAuctionCompletedEvent(Builders.toAuctionDto(auction));
     }
 
     public void finishWithNotSatisfiedResult(Long auctionId) {

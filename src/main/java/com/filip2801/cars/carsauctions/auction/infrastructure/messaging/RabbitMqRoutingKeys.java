@@ -6,5 +6,6 @@ public class RabbitMqRoutingKeys {
     public static final String AUCTION_ENDED = "auction.ended";
     public static final String AUCTION_RESULT_SATISFIED = "auction.resultSatisfied";
     public static final String AUCTION_RESULT_NOT_SATISFIED = "auction.resultNotSatisfied";
+    public static final String AUCTION_COMPLETED = "auction.completed";
 
 }

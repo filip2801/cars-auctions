@@ -1,5 +1,6 @@
 package com.filip2801.cars.carsauctions.car.domain;
 
+import com.filip2801.cars.carsauctions.common.Validate;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,4 +36,10 @@ public class Car {
 
     @Column
     Long winnerId;
+
+    public void assignWinner(Long winnerId) {
+        Validate.validateIsTrue(status == CarStatus.TO_SELL, "Car status is " + status);
+        this.status = CarStatus.SOLD;
+        this.winnerId = winnerId;
+    }
 }
