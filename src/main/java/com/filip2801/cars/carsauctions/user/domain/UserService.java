@@ -17,10 +17,18 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public UserDto registerDealer(UserDto userDto) {
+        return registerNewUser(userDto, UserRole.DEALER);
+    }
+
+    public UserDto registerNewAgent(UserDto userDto) {
+        return registerNewUser(userDto, UserRole.AGENT);
+    }
+
+    private UserDto registerNewUser(UserDto userDto, UserRole role) {
         User user = User.builder()
                 .username(userDto.username())
                 .password(passwordEncoder.encode(userDto.password()))
-                .role(UserRole.DEALER)
+                .role(role)
                 .build();
 
         userRepository.save(user);
