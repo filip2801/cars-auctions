@@ -8,7 +8,6 @@ public record InspectionAppointmentDto(
         Long id,
         Long locationId,
         LocalDateTime time,
-        String customerEmailAddress,
         InspectionAppointmentStatus status,
         Long carId
 ) {

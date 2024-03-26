@@ -1,9 +1,6 @@
-package com.filip2801.cars.carsauctions.inspection.domain;
+package com.filip2801.cars.carsauctions.car.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +18,8 @@ public class Car {
     Long id;
 
     @Column(nullable = false)
+    String customerEmailAddress;
+    @Column(nullable = false)
     Long makeId;
     @Column(nullable = false)
     Long modelId;
@@ -30,4 +29,10 @@ public class Car {
     int manufacturingYear;
     @Column(nullable = false)
     int registrationYear;
+
+    @Enumerated(EnumType.STRING)
+    CarStatus status;
+
+    @Column
+    Long winnerId;
 }

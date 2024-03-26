@@ -1,4 +1,4 @@
-package com.filip2801.cars.carsauctions.inspection.domain;
+package com.filip2801.cars.carsauctions.car.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

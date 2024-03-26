@@ -7,7 +7,7 @@ import static com.filip2801.cars.carsauctions.testutils.TestUtils.uniqueId
 
 class InspectionAppointmentsControllerITSpec extends ControllerIntegrationTestSpecification {
 
-    def "should book appointment"() {
+    def "should book inspection appointment"() {
         given:
         def requestPayload = someAppointmentRequestPayload()
 
@@ -19,14 +19,15 @@ class InspectionAppointmentsControllerITSpec extends ControllerIntegrationTestSp
         bookedInspectionAppointmentResponse.body.appointmentId
         bookedInspectionAppointmentResponse.body.locationId == requestPayload.locationId
         bookedInspectionAppointmentResponse.body.time == requestPayload.time
-        bookedInspectionAppointmentResponse.body.customerEmailAddress == requestPayload.customerEmailAddress
         bookedInspectionAppointmentResponse.body.status == 'BOOKED'
         bookedInspectionAppointmentResponse.body.car.id
+        bookedInspectionAppointmentResponse.body.car.customerEmailAddress == requestPayload.car.customerEmailAddress
         bookedInspectionAppointmentResponse.body.car.makeId == requestPayload.car.makeId
         bookedInspectionAppointmentResponse.body.car.modelId == requestPayload.car.modelId
         bookedInspectionAppointmentResponse.body.car.variantId == requestPayload.car.variantId
         bookedInspectionAppointmentResponse.body.car.manufacturingYear == requestPayload.car.manufacturingYear
         bookedInspectionAppointmentResponse.body.car.registrationYear == requestPayload.car.registrationYear
+        bookedInspectionAppointmentResponse.body.car.status == 'TO_SELL'
     }
 
     def "should fetch appointment"() {
@@ -110,15 +111,15 @@ class InspectionAppointmentsControllerITSpec extends ControllerIntegrationTestSp
 
     private LinkedHashMap<String, Serializable> someAppointmentRequestPayload() {
         return [
-                locationId          : uniqueId(),
-                time                : '2024-05-15T14:30:00',
-                customerEmailAddress: 'test@customer.com',
-                car                 : [
-                        makeId           : uniqueId(),
-                        modelId          : uniqueId(),
-                        variantId        : uniqueId(),
-                        manufacturingYear: 2015,
-                        registrationYear : 2016
+                locationId: uniqueId(),
+                time      : '2024-05-15T14:30:00',
+                car       : [
+                        customerEmailAddress: 'test@customer.com',
+                        makeId              : uniqueId(),
+                        modelId             : uniqueId(),
+                        variantId           : uniqueId(),
+                        manufacturingYear   : 2015,
+                        registrationYear    : 2016
                 ]
         ]
     }

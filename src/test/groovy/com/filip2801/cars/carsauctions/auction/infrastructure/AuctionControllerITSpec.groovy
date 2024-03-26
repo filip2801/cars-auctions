@@ -117,13 +117,13 @@ class AuctionControllerITSpec extends ControllerIntegrationTestSpecification {
         return [
                 locationId          : uniqueId(),
                 time                : '2024-05-15T14:30:00',
-                customerEmailAddress: 'test@customer.com',
                 car                 : [
-                        makeId           : uniqueId(),
-                        modelId          : uniqueId(),
-                        variantId        : uniqueId(),
-                        manufacturingYear: 2015,
-                        registrationYear : 2016
+                        customerEmailAddress: 'test@customer.com',
+                        makeId              : uniqueId(),
+                        modelId             : uniqueId(),
+                        variantId           : uniqueId(),
+                        manufacturingYear   : 2015,
+                        registrationYear    : 2016
                 ]
         ]
     }

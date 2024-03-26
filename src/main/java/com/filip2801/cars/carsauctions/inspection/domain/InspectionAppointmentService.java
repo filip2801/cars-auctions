@@ -1,8 +1,8 @@
 package com.filip2801.cars.carsauctions.inspection.domain;
 
+import com.filip2801.cars.carsauctions.car.domain.CarService;
 import com.filip2801.cars.carsauctions.common.exception.BadRequestException;
 import com.filip2801.cars.carsauctions.common.exception.ResourceNotFoundException;
-import com.filip2801.cars.carsauctions.inspection.infrastructure.dto.CarDto;
 import com.filip2801.cars.carsauctions.inspection.infrastructure.dto.InspectionAppointmentBookingDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,24 +19,14 @@ import static com.filip2801.cars.carsauctions.inspection.infrastructure.dto.Buil
 public class InspectionAppointmentService {
 
     private final InspectionAppointmentRepository inspectionAppointmentRepository;
-    private final CarRepository carRepository;
+    private final CarService carService;
 
     @Transactional
     public InspectionAppointmentBookingDto bookAppointment(InspectionAppointmentBookingDto inspectionAppointmentBookingDto) {
-        var car = carRepository.save(toNewCar(inspectionAppointmentBookingDto.car()));
-        var appointment = inspectionAppointmentRepository.save(toNewAppointment(inspectionAppointmentBookingDto, car.getId()));
+        var car = carService.registerCar(inspectionAppointmentBookingDto.car());
+        var appointment = inspectionAppointmentRepository.save(toNewAppointment(inspectionAppointmentBookingDto, car.id()));
 
         return toAppointmentBookingDto(car, appointment);
-    }
-
-    private Car toNewCar(CarDto carDto) {
-        return Car.builder()
-                .makeId(carDto.makeId())
-                .modelId(carDto.modelId())
-                .variantId(carDto.variantId())
-                .registrationYear(carDto.registrationYear())
-                .manufacturingYear(carDto.manufacturingYear())
-                .build();
     }
 
     private InspectionAppointment toNewAppointment(InspectionAppointmentBookingDto inspectionAppointmentBookingDto, Long carId) {
@@ -45,7 +35,6 @@ public class InspectionAppointmentService {
                 .status(InspectionAppointmentStatus.BOOKED)
                 .locationId(inspectionAppointmentBookingDto.locationId())
                 .time(inspectionAppointmentBookingDto.time())
-                .customerEmailAddress(inspectionAppointmentBookingDto.customerEmailAddress())
                 .build();
     }
 

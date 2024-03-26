@@ -25,8 +25,6 @@ public class InspectionAppointment {
     private Long locationId;
     @Column(nullable = false)
     private LocalDateTime time;
-    @Column(nullable = false)
-    private String customerEmailAddress;
 
     @Column(nullable = false)
     private Long carId;
