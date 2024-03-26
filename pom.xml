@@ -22,6 +22,7 @@
         <testcontainers.version>1.19.7</testcontainers.version>
         <archunit.version>1.2.1</archunit.version>
         <flyway.version>9.21.1</flyway.version>
+        <swagger.version>2.1.0</swagger.version>
     </properties>
 
     <dependencies>
@@ -70,6 +71,14 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${swagger.version}</version>
             <scope>provided</scope>
         </dependency>
 

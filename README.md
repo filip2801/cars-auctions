@@ -19,6 +19,7 @@ The Cars Auction Platform is designed to facilitate the auction process for cars
 - **Maven**: Manages project dependencies and build process.
 - **Spock Framework**: Provides a powerful testing platform, leveraging Groovy for clearer tests.
 - **Testcontainers**: Offers lightweight, throwaway instances of common databases, Rabbitmq, or anything else that can run in a Docker container for testing.
+- **Swagger**: API documentation.
 
 ## Design Considerations
 
@@ -50,6 +51,9 @@ On first start application will create first agent user with credentials `admin/
 ### Running tests
 Run ```./mvnw clean test```.
 Some tests require postgres and rabbitmq service, so they will be automatically started as docker containers.
+
+### API documentation
+Run application and open swagger ui http://localhost:8080/swagger-ui/index.html
 
 ## Future Enhancements
 
