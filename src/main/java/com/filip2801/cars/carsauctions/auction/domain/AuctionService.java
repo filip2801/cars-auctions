@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -121,6 +123,12 @@ public class AuctionService {
         auctionRepository.save(newAuction);
 
         return Builders.toAuctionDto(newAuction);
+    }
+
+    public List<AuctionDto> findAllByStatus(AuctionStatus status) {
+        return auctionRepository.findAllByStatus(status).stream()
+                .map(Builders::toAuctionDto)
+                .collect(Collectors.toList());
     }
 
 }

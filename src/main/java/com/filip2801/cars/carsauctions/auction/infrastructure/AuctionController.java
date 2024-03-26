@@ -1,6 +1,7 @@
 package com.filip2801.cars.carsauctions.auction.infrastructure;
 
 import com.filip2801.cars.carsauctions.auction.domain.AuctionService;
+import com.filip2801.cars.carsauctions.auction.domain.AuctionStatus;
 import com.filip2801.cars.carsauctions.auction.infrastructure.dto.AuctionBidDto;
 import com.filip2801.cars.carsauctions.auction.infrastructure.dto.AuctionBidRequest;
 import com.filip2801.cars.carsauctions.auction.infrastructure.dto.AuctionDto;
@@ -10,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -44,6 +47,12 @@ public class AuctionController {
     @PreAuthorize("hasRole('AGENT')")
     AuctionDto runAuctionAgain(@PathVariable Long auctionId) {
         return auctionService.runAgain(auctionId);
+    }
+
+    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('AGENT')")
+    List<AuctionDto> findAllByStatus(@RequestParam AuctionStatus status) {
+        return auctionService.findAllByStatus(status);
     }
 
 }
