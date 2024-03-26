@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  lab_storage_db:
+    image: postgres:16.2-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=cars_auctions
+    ports:
+      - '15432:5432'
+    volumes:
+      - car_auctions_volume:/var/lib/postgresql/data
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - '15673:15672'
+      - '5673:5672'
+volumes:
+  car_auctions_volume:
+    driver: local
