@@ -4,7 +4,6 @@ import com.filip2801.cars.carsauctions.common.security.CustomUserDetails
 import com.filip2801.cars.carsauctions.user.domain.UserRole
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import spock.util.concurrent.PollingConditions
 
 import static TestUtils.uniqueId
 import static TestUtils.uniqueString
@@ -25,11 +24,6 @@ class SimpleIntegrationTestSpecification extends BaseIntegrationTestSpecificatio
         loggedInUser = new CustomUserDetails(uniqueId(), uniqueString(), uniqueString(), role)
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loggedInUser, null)
         SecurityContextHolder.getContext().setAuthentication(authentication)
-    }
-
-    void eventually(Closure<?> conditions) {
-        var pollingConditions = new PollingConditions(timeout: 10)
-        pollingConditions.eventually(conditions)
     }
 
 }
