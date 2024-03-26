@@ -60,3 +60,7 @@ Run application and open swagger ui http://localhost:8080/swagger-ui/index.html
 - Enhance security with JWT-based authentication.
 - Add database indexes to speed up queries.
 - Introduce cars catalog.
+- Build docker container.
+- Introduce code coverage checking.
+- Introduce static code analysis tool.
+- Parametrized docker compose
