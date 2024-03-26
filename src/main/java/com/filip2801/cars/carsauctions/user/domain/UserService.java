@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -23,5 +26,11 @@ public class UserService {
         userRepository.save(user);
 
         return Builders.toUserDto(user);
+    }
+
+    public List<UserDto> findAllById(List<Long> ids) {
+        return userRepository.findAllById(ids).stream()
+                .map(Builders::toUserDto)
+                .collect(Collectors.toList());
     }
 }
